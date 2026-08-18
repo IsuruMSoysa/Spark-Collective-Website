@@ -1,67 +1,77 @@
-import Image from "next/image";
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import Services from "@/components/Services";
-import Workflow from "@/components/Workflow";
-import ScrollSection from "@/components/ScrollSection";
-import WhatsAppCTA from "@/components/WhatsAppCTA";
+import type { Metadata } from "next";
+import { MobileActionBar } from "@/components/chrome/MobileActionBar";
+import { CtaBand } from "@/components/home/CtaBand";
+import { Hero } from "@/components/home/Hero";
+import { ReelStrip } from "@/components/home/ReelStrip";
+import { ServicesTable } from "@/components/home/ServicesTable";
+import { Band } from "@/components/ui/Band";
+import { Marquee } from "@/components/ui/Marquee";
+import { PillLink } from "@/components/ui/Pill";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { ReceiptsGrid } from "@/components/work/ReceiptsGrid";
+import { cases } from "@/lib/cases";
+import { mobileTickerItems, servicesSection, workSection } from "@/lib/home";
+import { marqueeItems } from "@/lib/services";
+import { SITE } from "@/lib/site";
+
+export const metadata: Metadata = {
+  // absolute, so the root layout's "%s — Spark Collective" template does not
+  // double the brand name on the homepage.
+  title: { absolute: `${SITE.name} — ${SITE.tagline}` },
+  description: SITE.description,
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (
-    <main className="relative bg-background min-h-screen flex flex-col min-w-0 w-full max-w-full">
-      <Header />
+    <main className="flex-1 pb-20 md:pb-0">
+      <Hero />
+      <ReelStrip />
 
-      <div className="flex-1 min-w-0">
-        {/* Hero Section - Z-Index 1 */}
-        <ScrollSection index={1}>
-          <Hero />
-        </ScrollSection>
+      {/* 1a's full service marquee; 1c's tighter figure ticker below md. */}
+      <Marquee
+        items={marqueeItems}
+        durationSeconds={26}
+        className="hidden md:block"
+      />
+      <Marquee
+        items={mobileTickerItems}
+        durationSeconds={18}
+        size="sm"
+        className="md:hidden"
+      />
 
-        {/* Services Section - Z-Index 2 */}
-        <ScrollSection index={2} id="services">
-          <Services />
-        </ScrollSection>
+      <Band tone="bg" pad="lg" id="services">
+        <SectionHeader
+          title={
+            <>
+              What we
+              <br />
+              run for you
+            </>
+          }
+          meta={servicesSection.meta}
+        />
+        <ServicesTable linkRows className="mt-10" />
+      </Band>
 
-        {/* Workflow Section - rendered outside ScrollSection since it manages its own scroll animations and needs full height */}
-        <div className="relative z-3">
-          <Workflow />
-        </div>
-      </div>
+      {/* pad="none" + explicit bottom padding: the artboard runs the services
+          table straight into Receipts with no gap between the two sections. */}
+      <Band tone="bg" pad="none" id="work" className="pb-16 md:pb-24">
+        <SectionHeader
+          title={workSection.title}
+          trailing={
+            <PillLink href="/work" variant="ghost" size="sm">
+              {workSection.linkLabel} →
+            </PillLink>
+          }
+        />
+        <ReceiptsGrid cases={cases} className="mt-7" />
+      </Band>
 
-      {/* Static Footer */}
-      <footer className="relative py-6 border-t border-white/5 bg-background mt-auto">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-2xl font-bold flex items-center gap-3">
-            <Image
-              src="/2.png"
-              alt="Spark Collective Icon"
-              width={32}
-              height={32}
-            />
-            <Image
-              src="/4.png"
-              alt="Spark Collective Logo"
-              width={180}
-              height={40}
-              className="h-8 md:h-12 w-auto"
-            />
-          </div>
-          <div className="text-zinc-500 text-sm">
-            © {new Date().getFullYear()} Spark Collective. All rights reserved.
-          </div>
-          <div className="flex gap-4 md:gap-8 text-sm text-zinc-400">
-            {/* <a href="#" className="hover:text-accent transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-accent transition-colors">
-              Terms of Service
-            </a> */}
-          </div>
-        </div>
-      </footer>
+      <CtaBand />
 
-      {/* Fixed Overlay */}
-      <WhatsAppCTA />
+      <MobileActionBar />
     </main>
   );
 }
