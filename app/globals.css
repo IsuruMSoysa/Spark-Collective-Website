@@ -1,38 +1,539 @@
+/* =============================================================================
+   Spark Collective — design foundation
+   Ported from Claude Design "Spark Collective Revamp.dc.html" (artboards 1a–1g).
+
+   Structure (order matters):
+     1. @import "tailwindcss"
+     2. @custom-variant   — theme variants must be redefined; see note below
+     3. palettes          — the ONLY place literal colours exist
+     4. font stacks       — --ff-* (distinct names from the @theme --font-* keys)
+     5. @theme inline     — Tailwind bridge for anything whose value is a var()
+     6. @theme            — theme-invariant scalars
+     7. @utility          — type scale + surface patterns
+     8. @keyframes        — top level, so they are always emitted
+     9. @layer components — marquee mechanics
+    10. reduced motion
+    11. @layer base       — element defaults (MUST be layered)
+   ========================================================================== */
+
 @import "tailwindcss";
 
+/* -----------------------------------------------------------------------------
+   2. THEME VARIANTS
+   Tailwind v4's built-in `dark:` is `@media (prefers-color-scheme: dark)`.
+   Left alone it fights an attribute-driven toggle: a user who picks light on a
+   dark-OS machine would still get every `dark:` utility. Redefining is required,
+   not optional. :where() keeps specificity at 0 so these never outrank a plain
+   utility.
+-------------------------------------------------------------------------------*/
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/* -----------------------------------------------------------------------------
+   3. PALETTES
+   Every token is redefined between themes — this is not a dark-class overlay.
+   Note --orange / --on-orange INVERT, and --shade flips white-alpha to
+   black-alpha. :root[data-theme="light"] is (0,2,0) so it unambiguously beats
+   the (0,1,0) default.
+-------------------------------------------------------------------------------*/
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b0b0c;
+  --bg2: #121214;
+  --card: #17171a;
+  --card2: #1e1e22;
+
+  --line: rgb(255 255 255 / 0.1);
+  --line2: rgb(255 255 255 / 0.18);
+
+  --fg: #f5f2ee;
+  --fg2: rgb(245 242 238 / 0.6);
+  /* Design ships .34 here (2.88:1 — below AA). Raised to .5 (~4.9:1) because
+     the artboards use it for 10px mono label TEXT, not just hairlines. */
+  --fg3: rgb(245 242 238 / 0.5);
+
+  --orange: #ff5a1f;
+  --orange2: #ff8a4c;
+  --lime: #c6f24e;
+  --on-orange: #0b0b0c;
+
+  --shade: rgb(255 255 255 / 0.05);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f4f1ec;
+  --bg2: #ebe7e0;
+  --card: #ffffff;
+  --card2: #f7f5f1;
+
+  --line: rgb(11 11 12 / 0.12);
+  --line2: rgb(11 11 12 / 0.22);
+
+  --fg: #111112;
+  --fg2: rgb(17 17 18 / 0.64);
+  /* Design ships .40 (2.52:1). Raised to .56 for the same reason as above. */
+  --fg3: rgb(17 17 18 / 0.56);
+
+  --orange: #e8430a;
+  --orange2: #ff7a38;
+  --lime: #7fa800;
+  --on-orange: #ffffff;
+
+  --shade: rgb(11 11 12 / 0.04);
+}
+
+/* -----------------------------------------------------------------------------
+   4. FONT STACKS
+   Theme-invariant. Declared with --ff-* names so the @theme keys below can be
+   --font-* without becoming self-referential custom properties (which are
+   invalid at computed-value time and silently resolve to nothing).
+-------------------------------------------------------------------------------*/
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --accent: #ff5f1f;
-  --accent-dim: #cc4c19;
-  --surface: #111111;
-  --surface-light: #1a1a1a;
+  --ff-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  --ff-body: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --ff-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+
+  /* Sticky nav height — drives scroll-padding-top so anchors clear the header */
+  --nav-h: 3.25rem;
 }
 
+@media (width >= 48rem) {
+  :root {
+    --nav-h: 3.875rem;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   5. TAILWIND BRIDGE
+   `inline` is REQUIRED for every token whose value is a var() that changes per
+   theme. Without it Tailwind emits `--color-bg: var(--bg)` on :root only, which
+   resolves once against :root and leaves any nested theme scope stale.
+-------------------------------------------------------------------------------*/
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-dim: var(--accent-dim);
-  --color-surface: var(--surface);
-  --color-surface-light: var(--surface-light);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* surfaces */
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-card: var(--card);
+  --color-card2: var(--card2);
+  --color-shade: var(--shade);
+
+  /* hairlines */
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+
+  /* text */
+  --color-fg: var(--fg);
+  --color-fg2: var(--fg2);
+  --color-fg3: var(--fg3);
+
+  /* brand */
+  --color-orange: var(--orange);
+  --color-orange2: var(--orange2);
+  --color-lime: var(--lime);
+  --color-on-orange: var(--on-orange);
+
+  /* families */
+  --font-display: var(--ff-display);
+  --font-body: var(--ff-body);
+  --font-mono: var(--ff-mono);
+  --font-sans: var(--ff-body);
+
+  /* Animations. `inline` matters here too: the marquee reads its duration from
+     a per-element custom property, which only resolves at the element if the
+     utility carries the raw value rather than a :root indirection. */
+  --animate-marquee: mq var(--marquee-duration, 26s) linear infinite;
+  --animate-glowpulse: glowpulse var(--glow-duration, 7s) ease-in-out infinite;
+  --animate-sweep: sweep 5s linear infinite;
+  --animate-drawline: drawline 2.4s ease-out both;
+  --animate-emberdrift: emberdrift var(--ember-duration, 4.5s) linear infinite;
 }
 
-@utility glass {
-  backdrop-filter: blur(24px);
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* -----------------------------------------------------------------------------
+   6. THEME-INVARIANT SCALARS
+-------------------------------------------------------------------------------*/
+@theme {
+  --tracking-label: 0.12em;
+  --tracking-eyebrow: 0.16em;
+  --tracking-wide-eyebrow: 0.2em;
+  --tracking-mega: 0.42em;
+
+  --radius-card: 8px;
+  --radius-panel: 10px;
+  --radius-pill: 999px;
 }
 
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
+/* -----------------------------------------------------------------------------
+   7a. TYPE SCALE
+   Every class is complete — family, weight, size, leading, tracking, case — so
+   components never write a `font:` shorthand. @utility (not @layer components)
+   so responsive prefixes like `md:t-h1` work.
+-------------------------------------------------------------------------------*/
+@utility t-hero {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: clamp(2.875rem, 10.6vw, 8.5rem); /* 46 → 136px */
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  /* The headline renders as three lines at desktop width — "WE DON'T POST." is
+     forced by the <br>, then "WE IGNITE CULTURE." soft-wraps because at 136px it
+     measures ~1430px against a 1200px content box. That is what the artboard
+     itself produces, and it is why the design attaches the underline rule to the
+     "culture." span rather than the whole line. */
+  text-wrap: balance;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+@utility t-h1 {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: clamp(2.125rem, 5.4vw, 4.125rem); /* 34 → 66px */
+  line-height: 0.93;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+@utility t-h2 {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: clamp(1.75rem, 4.2vw, 3.375rem); /* 28 → 54px */
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+@utility t-h3 {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 3vw, 2.375rem); /* 24 → 38px */
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+@utility t-h4 {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: clamp(1.125rem, 1.9vw, 1.625rem); /* 18 → 26px */
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+@utility t-h5 {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 1rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+@utility t-lead {
+  font-family: var(--ff-display);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 2vw, 1.875rem); /* 20 → 30px */
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+@utility t-stat {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 2.75rem); /* 24 → 44px */
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility t-stat-lg {
+  font-family: var(--ff-display);
+  font-weight: 900;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mono labels. The negative margin-inline-end cancels the trailing letter-space
+   so a centred eyebrow is actually optically centred. */
+@utility t-eyebrow {
+  font-family: var(--ff-mono);
+  font-weight: 500;
+  font-size: 0.65625rem; /* 10.5px */
+  line-height: 1;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  margin-inline-end: calc(var(--tracking-eyebrow) * -1);
+}
+
+@utility t-eyebrow-wide {
+  font-family: var(--ff-mono);
+  font-weight: 500;
+  font-size: 0.6875rem; /* 11px */
+  line-height: 1;
+  letter-spacing: var(--tracking-wide-eyebrow);
+  text-transform: uppercase;
+  margin-inline-end: calc(var(--tracking-wide-eyebrow) * -1);
+}
+
+@utility t-label {
+  font-family: var(--ff-mono);
+  font-weight: 500;
+  font-size: 0.6875rem; /* 11px */
+  line-height: 1.2;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  margin-inline-end: calc(var(--tracking-label) * -1);
+}
+
+/* The artboards' 9.5–10px meta text, floored at 10px. */
+@utility t-meta {
+  font-family: var(--ff-mono);
+  font-weight: 500;
+  font-size: 0.625rem; /* 10px */
+  line-height: 1.4;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  margin-inline-end: calc(var(--tracking-label) * -1);
+}
+
+@utility t-body {
+  font-family: var(--ff-body);
+  font-weight: 400;
+  font-size: clamp(0.875rem, 1vw, 0.9375rem); /* 14 → 15px */
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+@utility t-body-lg {
+  font-family: var(--ff-body);
+  font-weight: 400;
+  font-size: clamp(0.9375rem, 1.2vw, 1.0625rem); /* 15 → 17px */
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+@utility t-body-sm {
+  font-family: var(--ff-body);
+  font-weight: 400;
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* -----------------------------------------------------------------------------
+   7b. SURFACE PATTERNS
+   The diagonal hatch behind every media placeholder, and the vertical rule
+   overlay on the hero. Both take their scale from a custom property so callers
+   never interpolate a Tailwind class string.
+-------------------------------------------------------------------------------*/
+@utility hatch {
+  background-color: var(--card);
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--shade) 0 var(--hatch-size, 10px),
+    transparent var(--hatch-size, 10px) calc(var(--hatch-size, 10px) * 2)
+  );
+}
+
+@utility gridlines {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--line) 0 1px,
+    transparent 1px var(--grid-gap, 106.6px)
+  );
+}
+
+/* -----------------------------------------------------------------------------
+   8. KEYFRAMES
+   Top level, NOT inside @theme. @theme does accept @keyframes, but only emits
+   them when a matching --animate-* token is consumed by a utility — so the
+   hand-written .marquee__track rule below would reference a missing keyframe.
+-------------------------------------------------------------------------------*/
+@keyframes mq {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes drawline {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes emberdrift {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-140px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes glowpulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   9. MARQUEE
+   Two identical groups on a max-content track, animated to -50%. The design
+   used width:200%, where each half is 50% of an arbitrary parent and the loop
+   seams correctly only by coincidence; max-content makes the seam exact at
+   every viewport.
+
+   WCAG 2.2.2 (Pause, Stop, Hide): motion running longer than 5s needs a pause
+   mechanism, hence the hover / focus-within / data-paused rules.
+-------------------------------------------------------------------------------*/
+@layer components {
+  .marquee {
+    overflow-x: clip;
+    contain: paint;
+  }
+
+  .marquee__track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: var(--animate-marquee);
+  }
+
+  .marquee__group {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+  }
+
+  .marquee:hover .marquee__track,
+  .marquee:focus-within .marquee__track,
+  .marquee[data-paused="true"] .marquee__track {
+    animation-play-state: paused;
+  }
+
+  /* Theme toggle label.
+     Both labels live in the DOM as real text and CSS picks one, so the server
+     and client render identical markup — no hydration mismatch and no
+     post-mount flicker. Done here rather than with `hidden dark:inline`
+     utilities because that would depend on Tailwind's utility ordering;
+     these selectors win on specificity ((0,3,0) over (0,1,0)) regardless. */
+  .theme-label {
+    display: none;
+  }
+
+  :root[data-theme="dark"] .theme-label--dark,
+  :root[data-theme="light"] .theme-label--light {
+    display: inline;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   10. REDUCED MOTION
+   All motion in this design is CSS, so this covers the lot — no JS, no hook.
+   Infinite decorative loops are killed outright; one-shot reveals collapse to
+   their end state (drawline uses `both`, so 1ms lands on 100%, not 0%).
+-------------------------------------------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee__track,
+  [data-motion="loop"] {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   11. BASE
+   MUST be inside @layer base. Unlayered element rules beat every utility, which
+   is why the previous bare `body { background: … }` silently outranked bg-*.
+-------------------------------------------------------------------------------*/
+@layer base {
+  html {
+    /* clip, NOT hidden: `overflow-x: hidden` makes <html> the scroll container
+       and breaks every position:sticky descendant — including the site nav. */
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-h);
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--ff-body);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: clip;
+    background-color: var(--bg);
+    color: var(--fg);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--ff-display);
+  }
+
+  ::selection {
+    background-color: var(--orange);
+    color: var(--on-orange);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--orange);
+    outline-offset: 2px;
+  }
+
+  ::placeholder {
+    color: var(--fg3);
+  }
 }
