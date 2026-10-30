@@ -4,7 +4,7 @@ import {
   CONTACT_FIELDS,
   GOAL_OPTIONS,
   HELP_OPTIONS,
-  labelFor,
+  labelsFor,
   type Enquiry,
 } from "./contact-form";
 
@@ -74,8 +74,8 @@ export function composeEnquiryEmail(enquiry: Enquiry): {
     `${CONTACT_FIELDS.email.label}: ${enquiry.email}`,
     `${CONTACT_FIELDS.company.label}: ${enquiry.company || "—"}`,
     "",
-    `${CONTACT_FIELDS.help.label} ${labelFor(HELP_OPTIONS, enquiry.help)}`,
-    `${CONTACT_FIELDS.goal.label} ${labelFor(GOAL_OPTIONS, enquiry.goal)}`,
+    `${CONTACT_FIELDS.help.label} ${labelsFor(HELP_OPTIONS, enquiry.help)}`,
+    `${CONTACT_FIELDS.goal.label} ${labelsFor(GOAL_OPTIONS, enquiry.goal)}`,
     "",
     `${CONTACT_FIELDS.message.label}:`,
     enquiry.message,

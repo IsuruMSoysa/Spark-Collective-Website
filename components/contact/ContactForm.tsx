@@ -28,7 +28,7 @@ import { ARROW, CTA, FORM_ERROR, FORM_SUCCESS, LOADING } from "@/lib/microcopy";
  * only affected visitor is one with JS switched off — and for them the page's
  * contact block carries a real mailto and a real WhatsApp link.
  *
- * Chips are native checkbox/radio inputs styled with `peer-checked:` rather than
+ * Chips are native checkboxes (both groups are multi-select) styled with `peer-checked:` rather than
  * buttons with aria-pressed: identical visuals, with keyboard behaviour and
  * screen-reader semantics for free and no hand-rolled ARIA. They are used in
  * place of <select> because a native select's popup renders in OS colours and
@@ -127,10 +127,10 @@ function ChipGroup({
         {options.map((option) => (
           <label key={option.id} className="inline-flex">
             <input
-              type="radio"
+              type="checkbox"
               name={name}
               value={option.id}
-              defaultChecked={selected === option.id}
+              defaultChecked={selected?.includes(option.id) ?? false}
               className="peer sr-only"
             />
             <span className={cn(CHIP_BASE, CHIP_STATE)}>{option.label}</span>
