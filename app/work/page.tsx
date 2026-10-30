@@ -1,42 +1,43 @@
 import type { Metadata } from "next";
+import { CtaBand } from "@/components/shared/CtaBand";
+import { NumberedList } from "@/components/shared/NumberedList";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { CtaBand } from "@/components/home/CtaBand";
 import { Band } from "@/components/ui/Band";
-import { ReceiptsGrid } from "@/components/work/ReceiptsGrid";
-import { cases, detailedCases } from "@/lib/cases";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { REPORTING_TITLE, WORK_PAGE, reportingFramework, workCta } from "@/lib/work";
 
 export const metadata: Metadata = {
-  title: "Work",
+  // Brand doc §11, verbatim.
+  title: { absolute: "Our Work | Spark Collective" },
   description:
-    "Campaign results across beverage, festival and fintech — social, creators, paid and live.",
+    "Campaigns, content and creator collaborations built for brands — and the standard every Spark write-up has to meet.",
   alternates: { canonical: "/work" },
 };
 
-/**
- * The design has no /work index artboard, so this reuses the homepage's
- * asymmetric "Receipts" grid rather than inventing a new layout. Cases without a
- * written-up detail render as non-linked cards, so there are no dead links.
- */
 export default function WorkPage() {
-  const pending = cases.length - detailedCases.length;
-
   return (
     <main className="flex-1">
       <PageHeader
-        eyebrow="Work"
-        title="Receipts"
-        blurb={
-          pending > 0
-            ? `Selected campaigns. ${pending} more write-ups are on the way.`
-            : "Selected campaigns, with the numbers attached."
+        eyebrow={WORK_PAGE.eyebrow}
+        title={
+          <>
+            {WORK_PAGE.title}
+            <br />
+            {WORK_PAGE.subtitle}
+          </>
         }
+        blurb={WORK_PAGE.blurb}
       />
 
-      <Band tone="bg" pad="md">
-        <ReceiptsGrid cases={cases} />
+      {/* §6 supplies a case-study structure but no verified case studies, and
+          §12 rules out inventing any. So the structure is the content: this is
+          the standard a write-up has to meet. Real cases slot in above it. */}
+      <Band tone="bg" pad="lg">
+        <SectionHeader title={REPORTING_TITLE} />
+        <NumberedList items={reportingFramework} className="mt-8" />
       </Band>
 
-      <CtaBand />
+      <CtaBand content={workCta} />
     </main>
   );
 }

@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { PillLink } from "@/components/ui/Pill";
+import { ARROW, CTA, NOT_FOUND } from "@/lib/microcopy";
 
 export const metadata: Metadata = {
   title: "Page not found",
 };
 
+/** Brand doc §10's 404. */
 export default function NotFound() {
   return (
     <main className="flex flex-1 items-center">
@@ -15,21 +17,17 @@ export default function NotFound() {
           Error 404
         </Eyebrow>
 
-        <h1 className="t-h1 m-0 max-w-[18ch] text-fg">
-          This page never made it to air
-        </h1>
+        <h1 className="t-h1 m-0 max-w-[18ch] text-fg">{NOT_FOUND.title}</h1>
 
-        <p className="t-body-lg mt-5 max-w-[44ch] text-fg2">
-          The link is dead or the page moved. The work, the services and a real
-          human are all still where you left them.
-        </p>
+        <p className="t-body-lg mt-5 max-w-[44ch] text-fg2">{NOT_FOUND.body}</p>
 
         <div className="mt-8 flex flex-wrap gap-2.5">
-          <PillLink href="/" variant="solid">
-            Back to home
+          <PillLink href="/" variant="solid" trailing={ARROW}>
+            {NOT_FOUND.cta}
           </PillLink>
-          <PillLink href="/work" variant="outline">
-            See the work
+
+          <PillLink href="/contact" variant="outline" trailing={ARROW}>
+            {CTA.startConversation}
           </PillLink>
         </div>
       </Container>

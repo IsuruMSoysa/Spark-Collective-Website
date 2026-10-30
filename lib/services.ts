@@ -1,263 +1,184 @@
-import {
-  buildDefaultTiers,
-  socialManagementPackages,
-  type PackageTier,
-} from "./packages";
-
 /**
- * The six disciplines. Table rows (number / name / description / priceHint) are
- * verbatim from artboard 1a. Artboard 1d only details Social Management.
+ * The six disciplines — brand doc §3 ("WHAT WE DO"), verbatim.
  *
- * AUTHORED — not from artboard: `headline`, `blurb` and `deliverables` for
- * services 02–06. These are descriptive capability statements, deliberately
- * free of figures or claims. Review with the client before launch.
+ * No pricing fields of any kind: §12 forbids package prices, starting prices,
+ * monthly rates, per-post rates, creator rates, production rates and retainer
+ * rates anywhere on the site. Every engagement routes to a conversation.
+ *
+ * The doc's prose uses a hyphen where the site's typography uses an em dash;
+ * dashes are normalised here for consistency with the rest of the content layer.
  */
-export type Deliverable = {
-  title: string;
-  description: string;
-};
-
 export type Service = {
   slug: string;
   /** Display only — '01'…'06'. */
   number: string;
   name: string;
-  /** Homepage table row + services index. */
-  description: string;
-  /** Display string from the artboard: 'From $6K/mo', 'Per campaign'. */
-  priceHint: string;
-  /** Structured starting figure, only where the design states one. */
-  priceFrom?: string;
-  cadence?: string;
-  /** Detail page H1. */
-  headline: string;
-  /** Detail page header, right column. */
-  blurb: string;
-  deliverables: readonly Deliverable[];
-  packages?: readonly PackageTier[];
+  /** The doc's punch line. Services table cell + the detail page H1. */
+  tagline: string;
+  /** Body copy. Service 04 is the only one the doc gives two paragraphs. */
+  description: readonly string[];
+  /** 'Services include:' for most, 'Content includes:' for 03. */
+  includesLabel: string;
+  includes: readonly string[];
 };
 
 export const services = [
   {
-    slug: "social-management",
+    slug: "social-media",
     number: "01",
-    name: "Social Management",
-    description:
-      "Always-on channel strategy, calendars, community and reporting — run by humans who know your category.",
-    priceHint: "From $6K/mo",
-    priceFrom: "$6K",
-    cadence: "/ month",
-    headline: "An always-on engine, not a posting schedule",
-    blurb:
-      "Strategy, production, community and reporting under one retainer — with a named team you can actually call.",
-    deliverables: [
-      {
-        title: "16–24 native posts",
-        description:
-          "Vertical video, carousels and stills built per platform — never cross-posted.",
-      },
-      {
-        title: "Community management",
-        description: "Replies, DMs and escalation inside four working hours.",
-      },
-      {
-        title: "One production day",
-        description: "A studio or on-site shoot that banks a month of assets.",
-      },
-      {
-        title: "Monthly performance review",
-        description:
-          "A live 45-minute read-out with what we're changing next.",
-      },
+    name: "Social Media",
+    tagline: "Don't just maintain your social presence. Build it.",
+    description: [
+      "We create and manage social channels that feel alive — from strategy and content planning to publishing, community and optimisation.",
     ],
-    packages: socialManagementPackages,
-  },
-  {
-    slug: "paid-performance",
-    number: "02",
-    name: "Paid & Performance",
-    description:
-      "Meta, TikTok, YouTube and programmatic buying with creative testing built into the media plan.",
-    priceHint: "From $8K/mo",
-    priceFrom: "$8K",
-    cadence: "/ month",
-    headline: "Media that earns its budget back",
-    blurb:
-      "One budget, bought across every platform that matters, with creative testing treated as part of the media plan rather than an afterthought.",
-    deliverables: [
-      {
-        title: "Full-funnel media buying",
-        description:
-          "Meta, TikTok, YouTube and programmatic planned and bought as a single budget.",
-      },
-      {
-        title: "Creative testing in the plan",
-        description:
-          "New hooks and cuts shipped weekly and judged on spend efficiency, not opinion.",
-      },
-      {
-        title: "Tracking hygiene",
-        description:
-          "Pixel, conversions API and UTM discipline so the numbers survive scrutiny.",
-      },
-      {
-        title: "Weekly pacing report",
-        description: "Spend, cost per acquisition, and where budget moves next.",
-      },
+    includesLabel: "Services include:",
+    includes: [
+      "Social Strategy",
+      "Content Planning",
+      "Creative Direction",
+      "Platform Management",
+      "Copywriting",
+      "Publishing",
+      "Community Management",
+      "Social Listening",
+      "Reporting & Optimisation",
     ],
   },
   {
     slug: "creator-campaigns",
-    number: "03",
+    number: "02",
     name: "Creator Campaigns",
-    description:
-      "Casting, negotiation, briefing and whitelisting across a vetted roster of 900+ creators.",
-    priceHint: "Per campaign",
-    headline: "The right creators, properly managed",
-    blurb:
-      "Casting matched on audience rather than follower count, then contracted, briefed and amplified without you chasing anyone.",
-    deliverables: [
-      {
-        title: "Casting from a vetted roster",
-        description:
-          "Shortlists drawn from 900+ creators, matched on audience rather than follower count.",
-      },
-      {
-        title: "Negotiation and contracting",
-        description:
-          "Rates, usage, exclusivity and deliverables handled end to end.",
-      },
-      {
-        title: "Briefs creators actually use",
-        description:
-          "One page, written for the platform rather than for the brand deck.",
-      },
-      {
-        title: "Whitelisting and amplification",
-        description:
-          "The strongest organic cuts put behind spend with the creator's handle attached.",
-      },
+    tagline: "The right creator can change the way people see your brand.",
+    description: [
+      "We build creator campaigns from strategy to execution — finding the right voices, managing partnerships and turning creator influence into measurable brand impact.",
+    ],
+    includesLabel: "Services include:",
+    includes: [
+      "Creator Strategy",
+      "Creator Discovery & Casting",
+      "Campaign Concepts",
+      "Creator Briefing",
+      "Negotiation & Coordination",
+      "Content Approvals",
+      "Campaign Management",
+      "Paid Amplification",
+      "Performance Tracking",
+      "Reporting",
     ],
   },
   {
-    slug: "content-studio",
+    slug: "content-production",
+    number: "03",
+    name: "Content Production",
+    tagline: "Make content people actually want to watch.",
+    description: [
+      "Our production approach is built around the realities of social — fast, flexible, platform-native and designed to create more from every opportunity.",
+    ],
+    includesLabel: "Content includes:",
+    includes: [
+      "Short-form Video",
+      "Reels",
+      "TikToks",
+      "YouTube Content",
+      "Product Content",
+      "Brand Films",
+      "Photography",
+      "UGC",
+      "Creator Content",
+      "Motion Graphics",
+      "Social Campaign Assets",
+    ],
+  },
+  {
+    slug: "paid-media",
     number: "04",
-    name: "Content Studio",
-    description:
-      "In-house shoots, edit and motion. Monthly drops of vertical video built for the feed, not the boardroom.",
-    priceHint: "Day rates",
-    headline: "A month of assets in a single day",
-    blurb:
-      "Repeatable vertical formats, shot fast and cut for the platform they'll actually be watched on.",
-    deliverables: [
-      {
-        title: "Monthly production day",
-        description:
-          "A studio or on-site shoot that banks a month of vertical assets.",
-      },
-      {
-        title: "Edit and motion",
-        description:
-          "Platform-native cuts, captions and graphics — never one edit resized five ways.",
-      },
-      {
-        title: "Format development",
-        description:
-          "Repeatable series built to be shot quickly and watched to the end.",
-      },
-      {
-        title: "Library and handover",
-        description: "Everything delivered organised, licensed and yours to keep.",
-      },
+    name: "Paid Media & Performance",
+    tagline: "Great content deserves distribution.",
+    description: [
+      "We combine creative and media so your strongest ideas don't disappear after the first post.",
+      "We test creative, audiences, formats and messaging to find what moves the numbers.",
+    ],
+    includesLabel: "Services include:",
+    includes: [
+      "Paid Social",
+      "Campaign Planning",
+      "Audience Strategy",
+      "Creative Testing",
+      "Retargeting",
+      "Conversion Campaigns",
+      "Performance Optimisation",
+      "Reporting & Insights",
     ],
   },
   {
-    slug: "live-experiential",
+    slug: "creative-strategy",
     number: "05",
-    name: "Live & Experiential",
-    description:
-      "Launches, activations and tours — production, staging, run-of-show and the content team that covers it.",
-    priceHint: "Project",
-    headline: "Moments people film and post",
-    blurb:
-      "Production, staging and run-of-show handled by a named producer, with a content team on site turning the day into a month of footage.",
-    deliverables: [
-      {
-        title: "Production and staging",
-        description:
-          "Site, build, power, sound and vision managed by a named producer.",
-      },
-      {
-        title: "Run-of-show and crew",
-        description: "Schedules, stage management and the people to hold them.",
-      },
-      {
-        title: "On-site content team",
-        description:
-          "A shooter and editor capturing the event as it happens, cut same day.",
-      },
-      {
-        title: "Permits and suppliers",
-        description:
-          "Licensing, insurance and vendor wrangling handled before you ask.",
-      },
+    name: "Creative Strategy",
+    tagline: "Start with the idea.",
+    description: [
+      "We turn business objectives into creative territories and campaigns that give people a reason to care.",
+    ],
+    includesLabel: "Services include:",
+    includes: [
+      "Brand Campaigns",
+      "Social Campaigns",
+      "Creative Concepts",
+      "Campaign Strategy",
+      "Content Strategy",
+      "Creative Direction",
+      "Platform Strategy",
+      "Campaign Architecture",
     ],
   },
   {
-    slug: "talent-booking",
+    slug: "ugc-creator-content",
     number: "06",
-    name: "Talent & Booking",
-    description:
-      "DJs, hosts, artists and speakers — booked, contracted and managed end to end for your event.",
-    priceHint: "Roster",
-    headline: "Booked, papered, and on stage on time",
-    blurb:
-      "Talent matched to the room and the budget, then advanced and managed from first offer to final settlement.",
-    deliverables: [
-      {
-        title: "Roster access",
-        description:
-          "DJs, hosts, artists and speakers matched to the room and the budget.",
-      },
-      {
-        title: "Offers and contracting",
-        description:
-          "Fees, riders, travel and cancellation terms negotiated and papered.",
-      },
-      {
-        title: "Advance and logistics",
-        description:
-          "Flights, hotels, ground, tech spec and day sheets confirmed ahead of time.",
-      },
-      {
-        title: "On-the-day management",
-        description: "A booker on site or on call from soundcheck to settlement.",
-      },
+    name: "UGC & Creator Content",
+    tagline: "More content. More voices. More ways to connect.",
+    description: [
+      "We build scalable creator content systems for brands that need a steady stream of authentic, platform-native creative.",
+    ],
+    includesLabel: "Services include:",
+    includes: [
+      "UGC Strategy",
+      "Creator Sourcing",
+      "Content Briefs",
+      "Product Seeding",
+      "UGC Production",
+      "Content Licensing",
+      "Paid Usage",
+      "Creative Testing",
+      "Ongoing Creator Programs",
     ],
   },
 ] as const satisfies readonly Service[];
-
-export type ServiceSlug = (typeof services)[number]["slug"];
-
-export const serviceSlugs: readonly string[] = services.map((s) => s.slug);
 
 export function getServiceBySlug(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);
 }
 
-export function getServicePackages(service: Service): readonly PackageTier[] {
-  return service.packages ?? buildDefaultTiers(service);
-}
+/** Brand doc §5's hero. */
+export const SERVICES_PAGE = {
+  eyebrow: "What we do",
+  title: "Strategy, creators, content and performance.",
+  blurb: "One team. One connected system.",
+} as const;
+
+/** Brand doc §3's section header for the services table. */
+export const WHAT_WE_DO = {
+  eyebrow: "What we do",
+  title: "Everything your brand needs to win attention.",
+  intro:
+    "Strategy, creators, content and performance — connected under one roof.",
+} as const;
 
 /**
  * Marquee strip on the homepage. Derived from `services` so the two can never
- * drift; the artboard's strip says "Live Events" and "Paid Performance" where
- * the table says "Live & Experiential" and "Paid & Performance", so the two
- * shortened labels are overridden explicitly.
+ * drift; two names are too long for the strip and are shortened explicitly.
  */
 const MARQUEE_LABEL_OVERRIDES: Record<string, string> = {
-  "paid-performance": "Paid Performance",
-  "live-experiential": "Live Events",
+  "paid-media": "Paid Media",
+  "ugc-creator-content": "UGC & Creators",
 };
 
 export const marqueeItems: readonly string[] = services.map(

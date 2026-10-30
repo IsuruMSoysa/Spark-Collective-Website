@@ -4,7 +4,8 @@ import { useEffect, useId, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import type { NavItem } from "@/lib/nav";
-import { PillAnchor } from "@/components/ui/Pill";
+import { PillLink } from "@/components/ui/Pill";
+import { ARROW, CTA } from "@/lib/microcopy";
 import { NavLinks } from "./NavLinks";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -19,11 +20,9 @@ import { ThemeToggle } from "./ThemeToggle";
  */
 export function MobileNav({
   items,
-  email,
   className,
 }: {
   items: readonly NavItem[];
-  email: string;
   className?: string;
 }) {
   const panelId = useId();
@@ -120,15 +119,16 @@ export function MobileNav({
           className="flex flex-col gap-5"
         />
 
-        <PillAnchor
-          href={`mailto:${email}`}
+        <PillLink
+          href="/contact"
           variant="solid"
           size="md"
+          trailing={ARROW}
           className="mt-7 w-full"
           onClick={() => setOpen(false)}
         >
-          Email the team
-        </PillAnchor>
+          {CTA.startConversation}
+        </PillLink>
 
         {/* The header hides the toggle below `sm`, so the drawer carries it —
             otherwise phone users have no way to reach the light theme at all. */}

@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
-import { BriefBuilder } from "@/components/contact/BriefBuilder";
 import { ContactChannels } from "@/components/contact/ContactChannels";
+import { ContactForm } from "@/components/contact/ContactForm";
+import { Band } from "@/components/ui/Band";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { PillAnchor } from "@/components/ui/Pill";
 import { GlowField } from "@/components/ui/decor";
 import {
+  CONTACT_CLOSING,
   CONTACT_COPY,
-  NEW_BUSINESS_EMAIL,
+  CONTACT_EMAIL,
   contactChannels,
 } from "@/lib/contact";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: CONTACT_COPY.blurb,
+  // absolute: brand doc §11's title already contains the brand name, so the
+  // root layout's "%s | Spark Collective" template would double it.
+  title: { absolute: "Contact Spark Collective | Let's Talk" },
+  description: SITE.description,
   alternates: { canonical: "/contact" },
 };
 
@@ -31,19 +35,14 @@ export default function ContactPage() {
 
             <h1 className="t-h1 m-0 text-fg">{CONTACT_COPY.headline}</h1>
 
-            <p className="t-body-lg mt-5 max-w-[420px] text-fg2">
-              {CONTACT_COPY.blurb}
-            </p>
-
-            <PillAnchor
-              href={`mailto:${NEW_BUSINESS_EMAIL}`}
-              variant="solid"
-              size="lg"
-              shape="card"
-              className="mt-8 max-w-full"
-            >
-              <span className="truncate">{NEW_BUSINESS_EMAIL}</span>
-            </PillAnchor>
+            {CONTACT_COPY.body.map((line) => (
+              <p
+                key={line.slice(0, 24)}
+                className="t-body-lg mt-5 max-w-[440px] text-fg2"
+              >
+                {line}
+              </p>
+            ))}
 
             <div className="mt-11">
               <ContactChannels channels={contactChannels} />
@@ -53,10 +52,35 @@ export default function ContactPage() {
 
         <section className="border-t border-line bg-bg2 lg:border-t-0">
           <Container className="py-14 md:py-[70px]">
-            <BriefBuilder to={NEW_BUSINESS_EMAIL} />
+            <Eyebrow size="wide" className="mb-6">
+              {CONTACT_COPY.formEyebrow}
+            </Eyebrow>
+
+            <ContactForm />
           </Container>
         </section>
       </div>
+
+      <Band tone="bg" bordered="top" pad="md">
+        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <h2 className="t-h2 m-0 text-fg">{CONTACT_CLOSING.title}</h2>
+
+            {CONTACT_CLOSING.body.map((line) => (
+              <p key={line} className="t-lead mt-2 text-fg2">
+                {line}
+              </p>
+            ))}
+          </div>
+
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="t-h4 break-all text-orange transition-colors hover:text-orange2"
+          >
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+      </Band>
     </main>
   );
 }

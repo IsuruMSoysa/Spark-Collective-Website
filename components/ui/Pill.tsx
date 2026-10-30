@@ -87,10 +87,16 @@ export function PillLink<T extends string>({
   trailing,
   className,
   children,
-}: PillBase & { href: Route<T> | URL }) {
+  onClick,
+}: PillBase & {
+  href: Route<T> | URL;
+  /** Only for side effects alongside navigation — closing the mobile drawer. */
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+}) {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={cn(pillClasses(variant, size, shape), className)}
     >
       <Inner leading={leading} trailing={trailing}>

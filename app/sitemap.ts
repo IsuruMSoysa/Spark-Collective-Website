@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import { detailedCases } from "@/lib/cases";
 import { services } from "@/lib/services";
 import { SITE } from "@/lib/site";
 
 /**
- * The payoff of a typed data layer: the sitemap is a couple of maps, and it can
- * never list a case study that has no page (only `detailedCases` get routes).
+ * The payoff of a typed data layer: the sitemap is one map over `services`, so
+ * it can never list a discipline that has no page.
+ *
+ * There are no /work/[slug] entries because there are no case studies yet — see
+ * lib/work.ts. Add the map back alongside real case data.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string) => `${SITE.url}${path}`;
@@ -18,10 +20,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url("/contact"), priority: 0.8 },
     ...services.map((service) => ({
       url: url(`/services/${service.slug}`),
-      priority: 0.7,
-    })),
-    ...detailedCases.map((study) => ({
-      url: url(`/work/${study.slug}`),
       priority: 0.7,
     })),
   ];

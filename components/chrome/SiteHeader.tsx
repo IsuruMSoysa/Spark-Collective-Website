@@ -1,6 +1,6 @@
 import { Lockup } from "@/components/brand/Lockup";
-import { PillAnchor } from "@/components/ui/Pill";
-import { NEW_BUSINESS_EMAIL } from "@/lib/contact";
+import { PillLink } from "@/components/ui/Pill";
+import { ARROW, CTA } from "@/lib/microcopy";
 import { primaryNav } from "@/lib/nav";
 import { MobileNav } from "./MobileNav";
 import { NavLinks } from "./NavLinks";
@@ -19,9 +19,11 @@ export function SiteHeader() {
       <div className="mx-auto flex h-(--nav-h) w-full max-w-[1280px] items-center justify-between gap-6 px-5 md:px-10">
         <Lockup href="/" size="md" />
 
+        {/* gap-6, not gap-7: the nav carries five items since brand doc §2 added
+            Home, and gap-7 overflows into the CTA at the md breakpoint. */}
         <NavLinks
           items={primaryNav}
-          className="hidden items-center gap-7 md:flex"
+          className="hidden items-center gap-6 md:flex"
         />
 
         {/* `max-*:hidden`, not `hidden sm:inline-flex`.
@@ -33,20 +35,18 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           <ThemeToggle className="max-sm:hidden" />
 
-          <PillAnchor
-            href={`mailto:${NEW_BUSINESS_EMAIL}`}
+          {/* Brand doc §8's primary CTA — the contact page, not a mailto. */}
+          <PillLink
+            href="/contact"
             variant="solid"
             size="sm"
+            trailing={ARROW}
             className="max-lg:hidden"
           >
-            {NEW_BUSINESS_EMAIL}
-          </PillAnchor>
+            {CTA.startConversation}
+          </PillLink>
 
-          <MobileNav
-            items={primaryNav}
-            email={NEW_BUSINESS_EMAIL}
-            className="md:hidden"
-          />
+          <MobileNav items={primaryNav} className="md:hidden" />
         </div>
       </div>
     </header>

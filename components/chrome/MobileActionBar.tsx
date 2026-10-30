@@ -1,5 +1,6 @@
-import { PillAnchor } from "@/components/ui/Pill";
-import { NEW_BUSINESS_EMAIL, getWhatsAppUrl } from "@/lib/contact";
+import { PillAnchor, PillLink } from "@/components/ui/Pill";
+import { getWhatsAppUrl } from "@/lib/contact";
+import { CTA } from "@/lib/microcopy";
 
 /**
  * Artboard 1c's sticky bottom bar. The mockup paired "Email us" with "Reel";
@@ -17,14 +18,9 @@ export function MobileActionBar() {
       className="fixed inset-x-0 bottom-0 z-30 flex gap-2.5 border-t border-line bg-bg px-5 py-3 md:hidden"
       style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
     >
-      <PillAnchor
-        href={`mailto:${NEW_BUSINESS_EMAIL}`}
-        variant="solid"
-        size="md"
-        className="flex-1"
-      >
-        Email us
-      </PillAnchor>
+      <PillLink href="/contact" variant="solid" size="md" className="flex-1">
+        {CTA.startConversation}
+      </PillLink>
 
       <PillAnchor
         href={getWhatsAppUrl()}

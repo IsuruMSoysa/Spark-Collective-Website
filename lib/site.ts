@@ -6,14 +6,19 @@
  */
 export const SITE = {
   name: "Spark Collective",
-  // TODO-CONFIRM: the design mockup uses sparkcollective.co, which is not yet
-  // the live domain. Falls back to the current Vercel deployment.
+  // TODO-CONFIRM: set NEXT_PUBLIC_SITE_URL to https://sparkcollective.lk in the
+  // deployment environment. Until then canonicals point at the Vercel preview.
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
     "https://spark-collective-website.vercel.app",
-  tagline: "We don't post. We ignite culture.",
+  /** Brand doc §1, primary tagline. Also the homepage H1. */
+  tagline: "We make brands impossible to ignore.",
+  /** Brand doc §1, short company description. Also the §11 meta description. */
   description:
-    "Full-service social, content and live entertainment for brands that refuse to be background noise.",
+    "Spark Collective is a creator-led social and content agency helping brands win attention through strategy, creators, content and performance.",
+  /** Brand doc §1, supporting statement. Shorter than `description`. */
+  supportingStatement:
+    "Creator-led social, content and campaigns built for brands that want to matter.",
   locale: "en",
 } as const;
 
