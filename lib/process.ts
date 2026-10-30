@@ -1,43 +1,47 @@
-/**
- * The "How the first 90 days go" grid from artboard 1d.
- *
- * This is agency-wide, not service-specific, so every /services/[slug] page
- * renders the same four steps — including the five services whose deliverables
- * and packages the design never detailed.
- */
-export type ProcessStep = {
-  number: string;
-  title: string;
-  window: string;
-  description: string;
-};
+import type { NumberedItem } from "./types";
 
-export const first90Days = [
+/**
+ * Brand doc §5 — "HOW WE WORK", verbatim.
+ *
+ * This replaces the previous "first 90 days" content, which had invented week
+ * windows the doc has no equivalent for.
+ */
+export const HOW_WE_WORK = {
+  eyebrow: "How we work",
+  title: "From idea to impact.",
+} as const;
+
+export const howWeWork = [
   {
     number: "01",
-    title: "Immersion",
-    window: "Week 1–2",
-    description: "Two weeks inside your brand, category and audience data.",
+    title: "Discover",
+    body: ["We get inside the brand, audience, category and objective."],
   },
   {
     number: "02",
-    title: "Blueprint",
-    window: "Week 3",
-    description:
-      "Channel plan, content pillars and the metrics we'll be judged on.",
+    title: "Strategise",
+    body: ["We define the opportunity, creative direction and success metrics."],
   },
   {
     number: "03",
-    title: "Ignition",
-    window: "Week 4–6",
-    description: "First shoot, first drops, first paid tests live in market.",
+    title: "Create",
+    body: ["Creators, creatives and production come together to make the work."],
   },
   {
     number: "04",
-    title: "Compound",
-    window: "Week 7–12",
-    description: "Double down on winners, cut the rest, scale spend.",
+    title: "Launch",
+    body: [
+      "We publish, distribute and put the work in front of the right audience.",
+    ],
   },
-] as const satisfies readonly ProcessStep[];
-
-export const PROCESS_TITLE = "How the first 90 days go";
+  {
+    number: "05",
+    title: "Optimise",
+    body: ["We look at what happened, learn quickly and improve."],
+  },
+  {
+    number: "06",
+    title: "Scale",
+    body: ["When something works, we do more of it."],
+  },
+] as const satisfies readonly NumberedItem[];

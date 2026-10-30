@@ -1,28 +1,29 @@
-import type { MediaAsset } from "./types";
+import { CTA } from "./microcopy";
+import type {
+  CtaContent,
+  MediaAsset,
+  NumberedItem,
+  Statement,
+} from "./types";
 
 /**
- * About page content, verbatim from artboard 1f.
+ * About page content — brand doc §4, verbatim.
  *
- * TODO-CONFIRM: the founding year, headcount and company history below are
- * mockup copy. The artboard also captioned the team grid "Austin · London ·
- * Remote"; that line is omitted rather than shipped, since those locations are
- * invented (see lib/contact.ts for the same reasoning applied to addresses).
+ * There is deliberately no team roster here. §4 defines five blocks and none of
+ * them is a team section; the previous roster was invented names, two of whose
+ * roles ("Exec Producer / Live", "Talent & Booking") §12 removes outright. Add
+ * one back only with real names and real portraits.
  */
-export type Principle = {
-  number: string;
-  title: string;
-  description: string;
-};
+export const ABOUT_EYEBROW = "About Spark";
 
-/** Keep beside the headline below so the written-out number can't drift. */
-export const TEAM_SIZE = 22;
-
-export const ABOUT_EYEBROW = "About";
-
-export const ABOUT_HEADLINE = "Twenty-two people who'd rather make than meet";
+export const ABOUT_HEADLINE =
+  "We believe brands should be part of culture — not interrupt it.";
 
 export const ABOUT_BODY = [
-  "Spark Collective started in 2019 as three freelancers sharing a rented edit suite and a stubborn belief: brands don't need more decks, they need more output. Seven years later we're a full studio — strategists, editors, producers and bookers under one roof, still allergic to slow.",
+  "Spark Collective is a creator-led social and content agency built for brands competing for attention in a world where everyone is publishing.",
+  "We combine strategy, creative thinking, creators, production and performance to build work that people notice.",
+  "No unnecessary layers. No endless decks. No content for the sake of content.",
+  "Just good ideas, made well, put in the right places and measured against what matters.",
 ] as const;
 
 export const ABOUT_PHOTO: MediaAsset = {
@@ -31,70 +32,117 @@ export const ABOUT_PHOTO: MediaAsset = {
   ratio: "4:3",
 };
 
-export const principles = [
+/** §4 — OUR APPROACH */
+export const APPROACH_TITLE = "Our approach";
+
+export const approach = [
   {
     number: "01",
-    title: "Make it, then measure it",
-    description:
-      "We'd rather ship ten cuts and learn than debate one for a month.",
+    title: "Start with the audience.",
+    body: [
+      "Before we make anything, we figure out who we're talking to, what they care about and why they should care about your brand.",
+    ],
   },
   {
     number: "02",
-    title: "No junior bait-and-switch",
-    description:
-      "The people in the pitch are the people on your account. Always.",
+    title: "Find the idea.",
+    body: [
+      "Then we turn the objective into something worth paying attention to.",
+    ],
   },
   {
     number: "03",
-    title: "Loud, never careless",
-    description:
-      "Attention is easy to buy badly. We go big with a plan behind it.",
+    title: "Make it native.",
+    body: [
+      "The best brand content doesn't feel like an interruption.",
+      "It belongs on the platform. It speaks the language of the audience.",
+    ],
   },
-] as const satisfies readonly Principle[];
+  {
+    number: "04",
+    title: "Put it in the right hands.",
+    body: [
+      "Creators bring trust, personality and communities that brands can't manufacture.",
+      "We match brands with creators for relevance — not just follower counts.",
+    ],
+  },
+  {
+    number: "05",
+    title: "Make it perform.",
+    body: [
+      "We learn from the data, improve the work and put more behind what works.",
+    ],
+  },
+] as const satisfies readonly NumberedItem[];
 
-export type TeamMember = {
-  id: string;
-  name: string;
-  role: string;
-  photo: MediaAsset;
-};
+/** §4 — OUR PRINCIPLES */
+export const PRINCIPLES_TITLE = "Our principles";
 
-/**
- * Annotated rather than `as const satisfies`: nothing derives a literal union
- * from this list, and the literal form would drop the optional `src`/`alt` keys
- * from each photo's type until real imagery is added.
- */
-export const team: readonly TeamMember[] = [
+export const principles = [
   {
-    id: "maya-okonkwo",
-    name: "Maya Okonkwo",
-    role: "Founder / Strategy",
-    photo: { id: "team-maya", label: "Portrait — 3:4", ratio: "3:4" },
+    number: "01",
+    title: "People First",
+    body: [
+      "Algorithms change. Platforms change.",
+      "People are the constant. We create for humans first.",
+    ],
   },
   {
-    id: "deniz-aydin",
-    name: "Deniz Aydın",
-    role: "Creative Director",
-    photo: { id: "team-deniz", label: "Portrait — 3:4", ratio: "3:4" },
+    number: "02",
+    title: "Make. Learn. Repeat.",
+    body: [
+      "The first version doesn't need to be perfect. It needs to exist.",
+      "We move quickly, learn from the response and make the next version better.",
+    ],
   },
   {
-    id: "priya-raman",
-    name: "Priya Raman",
-    role: "Head of Paid",
-    photo: { id: "team-priya", label: "Portrait — 3:4", ratio: "3:4" },
+    number: "03",
+    title: "Creativity Needs a Purpose",
+    body: [
+      "Beautiful work is nice. Effective work is better.",
+      "Every idea should have a reason to exist.",
+    ],
   },
   {
-    id: "luis-ferreira",
-    name: "Luis Ferreira",
-    role: "Exec Producer / Live",
-    photo: { id: "team-luis", label: "Portrait — 3:4", ratio: "3:4" },
+    number: "04",
+    title: "Creators Deserve Respect",
+    body: [
+      "Creators aren't just distribution channels. They're creative partners.",
+      "We build campaigns that give them room to do what they do best.",
+    ],
   },
   {
-    id: "tess-ngata",
-    name: "Tess Ngata",
-    role: "Talent & Booking",
-    photo: { id: "team-tess", label: "Portrait — 3:4", ratio: "3:4" },
+    number: "05",
+    title: "No Unnecessary Complexity",
+    body: [
+      "Good work shouldn't require a hundred meetings.",
+      "Clear thinking. Clear communication. Fast execution.",
+    ],
   },
-];
+] as const satisfies readonly NumberedItem[];
 
-export const HIRING_HEADLINE = "We're hiring editors and producers";
+/** §4 — WHO WE WORK WITH */
+export const whoWeWorkWith = {
+  eyebrow: "Who we work with",
+  headline: "Brands that want to matter.",
+  stanzas: [
+    {
+      lines: [
+        "We work with brands that want to grow, launch, reposition or simply become more relevant.",
+      ],
+    },
+    {
+      lines: [
+        "From ambitious startups to established brands, we build the right combination of strategy, creators, content and distribution for the job.",
+      ],
+    },
+  ],
+} as const satisfies Statement;
+
+/** §4 — ABOUT CTA */
+export const aboutCta = {
+  title: "Have something worth saying?",
+  copy: "Let's make sure people hear it.",
+  ctaLabel: CTA.talkToSpark,
+  ctaHref: "/contact",
+} as const satisfies CtaContent;

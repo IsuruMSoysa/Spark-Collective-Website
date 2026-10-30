@@ -1,41 +1,48 @@
 import type { Metadata } from "next";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { DeckBand } from "@/components/services/DeckBand";
-import { ProcessGrid } from "@/components/services/ProcessGrid";
 import { ServicesTable } from "@/components/home/ServicesTable";
+import { ServicesCta } from "@/components/services/ServicesCta";
+import { NumberedList } from "@/components/shared/NumberedList";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { Band } from "@/components/ui/Band";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { HOW_WE_WORK, howWeWork } from "@/lib/process";
+import { SERVICES_PAGE } from "@/lib/services";
 
 export const metadata: Metadata = {
-  title: "Services",
+  // Brand doc §11, verbatim.
+  title: { absolute: "Social, Creator Campaigns & Content | Spark Collective" },
   description:
-    "Six disciplines, one team: social management, paid and performance, creator campaigns, content studio, live and experiential, talent and booking.",
+    "Social media, creator campaigns, content production, paid media and performance, creative strategy, and UGC and creator content — one team, one connected system.",
   alternates: { canonical: "/services" },
 };
 
-/**
- * No artboard exists for this index, so it is composed entirely from parts that
- * already do — the same ServicesTable the homepage uses, plus the shared process
- * grid. Redirecting to the first service would point a primary nav item at a
- * redirect and give the other five no internal inbound link.
- */
 export default function ServicesPage() {
   return (
     <main className="flex-1">
       <PageHeader
-        eyebrow="Services"
-        title="Six disciplines, one team"
-        blurb="Pick a discipline to see what a month actually looks like — deliverables, packages and the first ninety days."
+        eyebrow={SERVICES_PAGE.eyebrow}
+        title={SERVICES_PAGE.title}
+        blurb={SERVICES_PAGE.blurb}
       />
 
       <Band tone="bg" pad="md">
         <ServicesTable linkRows />
       </Band>
 
-      <Band tone="bg" pad="md" bordered="bottom">
-        <ProcessGrid />
+      {/* Rendered here and not on the six detail pages: one agency-wide process
+          repeated six times is noise. */}
+      <Band tone="bg2" pad="lg" bordered="top">
+        <SectionHeader eyebrow={HOW_WE_WORK.eyebrow} title={HOW_WE_WORK.title} />
+        <NumberedList
+          items={howWeWork}
+          layout="grid"
+          columns={3}
+          surface="bg2"
+          className="mt-10"
+        />
       </Band>
 
-      <DeckBand />
+      <ServicesCta />
     </main>
   );
 }

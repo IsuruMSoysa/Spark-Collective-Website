@@ -34,7 +34,7 @@ export function Card({
   pad?: keyof typeof PAD_CLASS;
   radius?: keyof typeof RADIUS_CLASS;
   bordered?: boolean;
-  /** Orange border — the featured package tier. */
+  /** Orange border — for singling one card out of a set. */
   accent?: boolean;
   className?: string;
   children: React.ReactNode;

@@ -1,13 +1,16 @@
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import type { Deliverable } from "@/lib/services";
 
-/** Artboard 1d's "What you get, every month" column. */
+/**
+ * The "Services include:" / "Content includes:" capability list from brand doc
+ * §3. Two columns from `sm` up: the doc gives each service 8–11 items, which is
+ * a long single column on anything wider than a phone.
+ */
 export function DeliverablesList({
-  title = "What you get, every month",
+  title,
   items,
 }: {
-  title?: string;
-  items: readonly Deliverable[];
+  title: string;
+  items: readonly string[];
 }) {
   return (
     <div>
@@ -15,17 +18,14 @@ export function DeliverablesList({
         {title}
       </Eyebrow>
 
-      <ul className="m-0 flex list-none flex-col gap-4 p-0">
+      <ul className="m-0 grid list-none grid-cols-1 gap-x-10 gap-y-3.5 p-0 sm:grid-cols-2">
         {items.map((item) => (
-          <li key={item.title} className="flex items-start gap-3.5">
+          <li key={item} className="flex items-start gap-3.5">
             <span
               aria-hidden="true"
               className="mt-[7px] size-2 shrink-0 bg-orange"
             />
-            <div>
-              <div className="t-h5 text-fg">{item.title}</div>
-              <p className="t-body m-0 mt-1 text-fg2">{item.description}</p>
-            </div>
+            <span className="t-h5 text-fg">{item}</span>
           </li>
         ))}
       </ul>

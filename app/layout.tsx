@@ -39,8 +39,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — Social, content and live entertainment`,
-    template: `%s — ${SITE.name}`,
+    // Brand doc §11's titles already carry the brand name after a pipe, so the
+    // template matches that separator and every §11 page sets `absolute`. The
+    // template is what /services/[slug] uses.
+    default: "Spark Collective | Creator-Led Social & Content Agency",
+    template: `%s | ${SITE.name}`,
   },
   description: SITE.description,
   openGraph: {

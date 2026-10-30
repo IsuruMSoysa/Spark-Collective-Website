@@ -3,7 +3,7 @@ import type { Route } from "next";
 import { Lockup } from "@/components/brand/Lockup";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { FOOTER_BLURB, footerColumns } from "@/lib/nav";
+import { footerColumns, socialLinks } from "@/lib/nav";
 import { SITE } from "@/lib/site";
 
 export function SiteFooter() {
@@ -13,10 +13,13 @@ export function SiteFooter() {
         <div className="flex flex-col justify-between gap-10 md:flex-row">
           <div className="max-w-[280px]">
             <Lockup href="/" size="lg" withMark={false} />
-            <p className="t-body-sm mt-4 text-fg2">{FOOTER_BLURB}</p>
+            <p className="t-body-sm mt-4 text-fg2">
+              {SITE.supportingStatement}
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:gap-14">
+          {/* Two columns since brand doc §9 replaced the three-column layout. */}
+          <div className="grid grid-cols-2 gap-8 md:gap-14">
             {footerColumns.map((column) => (
               <div key={column.heading}>
                 <Eyebrow size="meta" className="mb-3">
@@ -52,10 +55,30 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="t-meta mt-10 border-t border-line pt-6 text-fg3">
+        <div className="t-meta mt-10 flex flex-col gap-5 border-t border-line pt-6 text-fg3 sm:flex-row sm:items-center sm:justify-between">
           {/* Baked at build time under static prerendering — redeploy annually
               rather than opting the whole footer into dynamic rendering. */}
-          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+          <div>
+            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+          </div>
+
+          {/* Renders nothing until real profile URLs exist — see lib/nav.ts. */}
+          {socialLinks.length > 0 ? (
+            <ul className="m-0 flex list-none flex-wrap gap-5 p-0">
+              {socialLinks.map((social) => (
+                <li key={social.label}>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-fg2 transition-colors hover:text-orange"
+                  >
+                    {social.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </Container>
     </footer>
