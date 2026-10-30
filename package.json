@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "email:verify": "node --env-file=.env scripts/email-check.mjs verify",
+    "email:test": "node --env-file=.env scripts/email-check.mjs send"
   },
   "dependencies": {
     "next": "16.2.3",

@@ -30,6 +30,10 @@ type SmtpConfig = {
  * Read at call time, never at module scope: a top-level read would run during
  * `next build`, where none of these exist, and a throw there would fail the
  * build. Missing config is a request-time condition, not a build-time one.
+ *
+ * On iCloud the login and the sender differ: SMTP_USER must be the primary
+ * @icloud.com address, so CONTACT_FROM_EMAIL carries the custom-domain sender.
+ * scripts/email-check.mjs mirrors this function — keep them in sync.
  */
 function readSmtpConfig(): SmtpConfig | null {
   const host = process.env.SMTP_HOST;
