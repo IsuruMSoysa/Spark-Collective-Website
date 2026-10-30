@@ -67,10 +67,17 @@ export type Enquiry = {
   name: string;
   email: string;
   company: string;
-  help: HelpId;
-  goal: GoalId;
+  /** Multi-select: one or more, in option order. */
+  help: HelpId[];
+  goal: GoalId[];
   message: string;
 };
+
+/** What the form echoes back: text fields as strings, chip groups as id lists. */
+export type ContactValues = Partial<
+  Record<Exclude<ContactFieldName, "help" | "goal">, string> &
+    Record<"help" | "goal", string[]>
+>;
 
 export type ContactStatus = "idle" | "invalid" | "sent" | "error";
 
@@ -81,7 +88,7 @@ export type ContactState = {
    * Echoed back so a validation round-trip refills the form from the returned
    * state rather than from client state. Never populated on "sent".
    */
-  values?: Partial<Record<ContactFieldName, string>>;
+  values?: ContactValues;
   /** On "error": a prefilled mailto so the visitor is never stranded. */
   fallbackHref?: string;
 };
@@ -96,22 +103,18 @@ const MAX_LENGTH = {
   message: 4000,
 } as const;
 
-const HELP_IDS: ReadonlySet<string> = new Set(HELP_OPTIONS.map((o) => o.id));
-const GOAL_IDS: ReadonlySet<string> = new Set(GOAL_OPTIONS.map((o) => o.id));
-
-export function isHelpId(value: string): value is HelpId {
-  return HELP_IDS.has(value);
-}
-
-export function isGoalId(value: string): value is GoalId {
-  return GOAL_IDS.has(value);
-}
-
 export function labelFor(
   options: readonly ContactOption[],
   id: string
 ): string {
   return options.find((option) => option.id === id)?.label ?? id;
+}
+
+export function labelsFor(
+  options: readonly ContactOption[],
+  ids: readonly string[]
+): string {
+  return ids.map((id) => labelFor(options, id)).join(", ");
 }
 
 /**
@@ -133,6 +136,19 @@ function read(formData: FormData, key: string): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+/**
+ * A checkbox group's checked ids, filtered to the known set and returned in
+ * option order — never trusted as sent, since a POST can carry anything.
+ */
+function readSelection<Id extends string>(
+  formData: FormData,
+  key: string,
+  options: readonly { id: Id }[]
+): Id[] {
+  const sent = new Set(formData.getAll(key));
+  return options.filter((option) => sent.has(option.id)).map((o) => o.id);
+}
+
 export type ParseResult =
   | { ok: true; data: Enquiry }
   /** A bot: honeypot filled, or submitted implausibly fast. */
@@ -141,7 +157,7 @@ export type ParseResult =
       ok: false;
       reason: "invalid";
       errors: Partial<Record<ContactFieldName, string>>;
-      values: Partial<Record<ContactFieldName, string>>;
+      values: ContactValues;
     };
 
 export function parseContactForm(
@@ -166,8 +182,8 @@ export function parseContactForm(
     name: singleLine(read(formData, "name")),
     email: singleLine(read(formData, "email")),
     company: singleLine(read(formData, "company")),
-    help: read(formData, "help"),
-    goal: read(formData, "goal"),
+    help: readSelection(formData, "help", HELP_OPTIONS),
+    goal: readSelection(formData, "goal", GOAL_OPTIONS),
     message: read(formData, "message"),
   };
 
@@ -187,8 +203,10 @@ export function parseContactForm(
     errors.company = "That's longer than we can store.";
   }
 
-  if (!isHelpId(values.help)) errors.help = "Pick one so we know who to loop in.";
-  if (!isGoalId(values.goal)) errors.goal = "Pick the closest one.";
+  if (values.help.length === 0) {
+    errors.help = "Pick at least one so we know who to loop in.";
+  }
+  if (values.goal.length === 0) errors.goal = "Pick at least one.";
 
   if (!values.message) errors.message = "A sentence or two is plenty.";
   else if (values.message.length > MAX_LENGTH.message) {
@@ -199,7 +217,7 @@ export function parseContactForm(
     return { ok: false, reason: "invalid", errors, values };
   }
 
-  return { ok: true, data: values as Enquiry };
+  return { ok: true, data: values };
 }
 
 /**
@@ -207,13 +225,13 @@ export function parseContactForm(
  * written into their mail client, so a failed send never costs them the typing.
  */
 export function enquiryMailtoHref(
-  values: Partial<Record<ContactFieldName, string>>
+  values: ContactValues
 ): string {
   const lines = [
     `Name: ${values.name ?? ""}`,
     `Company: ${values.company ?? ""}`,
-    values.help ? `Looking for: ${labelFor(HELP_OPTIONS, values.help)}` : "",
-    values.goal ? `Goal: ${labelFor(GOAL_OPTIONS, values.goal)}` : "",
+    values.help?.length ? `Looking for: ${labelsFor(HELP_OPTIONS, values.help)}` : "",
+    values.goal?.length ? `Goal: ${labelsFor(GOAL_OPTIONS, values.goal)}` : "",
     "",
     values.message ?? "",
   ].filter((line) => line !== "");

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { MobileActionBar } from "@/components/chrome/MobileActionBar";
 import { Hero } from "@/components/home/Hero";
-import { ReelStrip } from "@/components/home/ReelStrip";
+// import { ReelStrip } from "@/components/home/ReelStrip";
 import { ServicesTable } from "@/components/home/ServicesTable";
 import { ArrowFlow } from "@/components/shared/ArrowFlow";
 import { CtaBand } from "@/components/shared/CtaBand";
@@ -44,7 +44,8 @@ export default function Home() {
         <StatRow stats={homeStats} columns={4} divided />
       </Band>
 
-      <ReelStrip />
+      {/* Hidden until real reel media exists. */}
+      {/* <ReelStrip /> */}
 
       <Marquee items={marqueeItems} durationSeconds={26} className="hidden md:block" />
       <Marquee

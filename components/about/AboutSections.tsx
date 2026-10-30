@@ -1,11 +1,11 @@
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
-import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
+// import { MediaPlaceholder } from "@/components/ui/MediaPlaceholder";
 import {
   ABOUT_BODY,
   ABOUT_EYEBROW,
   ABOUT_HEADLINE,
-  ABOUT_PHOTO,
+  // ABOUT_PHOTO,
 } from "@/lib/about";
 
 /**
@@ -16,7 +16,8 @@ import {
  */
 export function AboutHero() {
   return (
-    <section className="grid border-b border-line lg:grid-cols-[1.2fr_1fr]">
+    // Photo column hidden for now; restore `lg:grid-cols-[1.2fr_1fr]` with it.
+    <section className="grid border-b border-line">
       <div className="order-2 lg:order-1">
         <Container className="py-12 md:py-[66px]">
           <Eyebrow tone="orange" size="wide" className="mb-4.5">
@@ -36,6 +37,7 @@ export function AboutHero() {
         </Container>
       </div>
 
+      {/* Hidden until a real photo exists.
       <MediaPlaceholder
         ratio="4:3"
         label={ABOUT_PHOTO.label}
@@ -45,6 +47,7 @@ export function AboutHero() {
         hatch="lg"
         className="order-1 lg:order-2 lg:aspect-auto lg:min-h-[400px]"
       />
+      */}
     </section>
   );
 }

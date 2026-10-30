@@ -20,6 +20,31 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Contact form email
+
+The form on `/contact` sends enquiries over SMTP from an iCloud+ custom-domain
+address (`lib/email.ts`). Copy `.env.example` to `.env` and fill it in.
+
+iCloud rules — breaking either one gives `535 5.7.8 authentication failed`:
+
+- `SMTP_USER` must be the Apple ID's **primary @icloud.com address**, not a
+  `@sparkcollective.lk` address.
+- `SMTP_PASS` must be an **app-specific password** from that same Apple ID
+  (account.apple.com → Sign-In and Security → App-Specific Passwords).
+
+`CONTACT_FROM_EMAIL` (`hello@sparkcollective.lk`) is the sender the inbox sees;
+it must be a custom-domain address on the same Apple ID. Replying to an enquiry
+goes to the visitor via Reply-To.
+
+```bash
+npm run email:verify   # SMTP login only, sends nothing
+npm run email:test     # sends one test email to CONTACT_TO_EMAIL
+```
+
+**Vercel:** Project → Settings → Environment Variables. Add `SMTP_HOST`,
+`SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_FROM_EMAIL` and
+`CONTACT_TO_EMAIL` for Production and Preview, then redeploy.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
